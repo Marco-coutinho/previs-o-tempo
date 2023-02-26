@@ -5,4 +5,3 @@ criado para não so verificar o atual como tambem partilhar as previssão para o
 
 Link Para teste e visualização:  https://previsao-do-tempo-green.vercel.app/
 
-No momento apresenta erro 401 por conta da key, porem ja esta sendo verificado >_<
