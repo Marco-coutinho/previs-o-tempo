@@ -5,7 +5,7 @@ const timezone = document.getElementById("time-zone");
 const countryEl = document.getElementById("country");
 const weatherForecastEl = document.getElementById("weather-forecast");
 const currentTempEl = document.getElementById("current-temp");
-const city = document.getElementById("city");
+const city = document.querySelector(".search-bar").value;
 
 const days = [
   "Sunday",
@@ -31,7 +31,7 @@ const months = [
   "Dec",
 ];
 
-const API_KEY = "49cc8c821cd2aff9af04c9f98c36eb74";
+const API_KEY = "ba15462c71a53b3890eaf2978c39a6b2";
 
 setInterval(() => {
   const time = new Date();
@@ -58,8 +58,10 @@ function fetchWeather(city) {
     "https://api.openweathermap.org/data/2.5/weather?q=" +
       city +
       "&units=metric&appid=" +
-      this.apiKey
+      API_KEY
   )
+
+  
     .then((response) => {
       if (!response.ok) {
         alert("No weather found.");
@@ -70,12 +72,26 @@ function fetchWeather(city) {
     .then((data) => this.displayWeather(data));
 }
 
-function showWeatherData(data) {
-  let { humidity, pressure, sunrise, sunset, wind_speed } = data.current;
+function displayWeather(data) {
+  let { humidity, pressure} = data.main;
+  let { wind: { speed: wind_speed } } = data;
+  const sunrise = new Date(data.sys.sunrise * 1000).toLocaleString("en-US", {
+  hour: "numeric",
+  minute: "numeric",
+  hour12: true,
+});
+
+const sunset = new Date(data.sys.sunset * 1000).toLocaleString("en-US", {
+  hour: "numeric",
+  minute: "numeric",
+  hour12: true,
+});
+
+
 
   timezone.innerHTML = data.timezone;
-  countryEl.innerHTML = data.lat + "N " + data.lon + "E";
-
+  countryEl.innerHTML = data.sys.country;
+  
   currentWeatherItemsEl.innerHTML = `<div class="weather-item">
         <div>Humidity</div>
         <div>${humidity}%</div>
@@ -88,21 +104,20 @@ function showWeatherData(data) {
         <div>Wind Speed</div>
         <div>${wind_speed}</div>
     </div>
-
     <div class="weather-item">
         <div>Sunrise</div>
-        <div>${window.moment(sunrise * 1000).format("HH:mm a")}</div>
+        <div>${sunrise}</div>
     </div>
     <div class="weather-item">
         <div>Sunset</div>
-        <div>${window.moment(sunset * 1000).format("HH:mm a")}</div>
+        <div>${sunset}</div>
     </div>
     
     
     `;
 
-  let otherDayForcast = "";
-  data.daily.forEach((day, idx) => {
+  let otherDayForcast = '';
+  data.weather.forEach((day, idx) => {
     if (idx == 0) {
       currentTempEl.innerHTML = `
             <img src="http://openweathermap.org/img/wn//${
@@ -135,15 +150,14 @@ function showWeatherData(data) {
   });
 }
 function search() {
-  this.fetchWeather(document.querySelector(".search-bar").value);
+  fetchWeather(document.querySelector(".search-bar").value);
 }
 
 document.querySelector(".search button").addEventListener("click", function () {
   search();
 });
 
-document
-  .querySelector(".search-bar")
+document.querySelector(".search-bar")
   .addEventListener("keyup", function (event) {
     if (event.key == "Enter") {
       search();
