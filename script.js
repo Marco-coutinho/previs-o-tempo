@@ -70,6 +70,8 @@ function fetchWeather(city) {
       return response.json();
     })
     .then((data) => this.displayWeather(data));
+    document.body.style.backgroundImage =
+    "url('https://source.unsplash.com/1600x900/?" + city + "')";
 }
 
 function displayWeather(data) {
@@ -163,3 +165,5 @@ document.querySelector(".search-bar")
       search();
     }
   });
+
+  fetchWeather("Natal");
